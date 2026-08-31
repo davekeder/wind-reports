@@ -1,4 +1,29 @@
 {
-  "full_day": null,
+  "full_day": {
+    "forecast_date": "2026-09-01",
+    "generated_at": "2026-08-31T11:07:16-06:00",
+    "times": [
+      "05:00",
+      "07:00",
+      "09:00",
+      "12:00",
+      "15:00",
+      "18:00"
+    ],
+    "areas": [
+      {
+        "name": "West La Garita — GMU 68",
+        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-west-la-garita-20260831-105517.kmz"
+      },
+      {
+        "name": "East La Garita — GMU 68",
+        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-east-la-garita-20260831-105517.kmz"
+      },
+      {
+        "name": "La Garita → Mesa / Bowers / Boot",
+        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-ridge-corridor-20260831-105517.kmz"
+      }
+    ]
+  },
   "evening": null
 }
