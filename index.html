@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+
+  <title>Colorado Wind Forecasts</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 20px 14px 40px;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin: 14px 0;
+      box-shadow: 0 2px 7px rgba(0,0,0,.09);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.35rem;
+    }
+
+    .meta {
+      margin: 6px 0;
+    }
+
+    .small {
+      color: #6b7280;
+      font-size: .92rem;
+    }
+
+    .downloads {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .download {
+      display: block;
+      padding: 14px 12px;
+      border-radius: 10px;
+      background: #1f2937;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      font-weight: 650;
+    }
+
+    .download:active {
+      transform: scale(.99);
+    }
+
+    .empty {
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: #6b7280;
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+
+    @media (prefers-color-scheme: dark) {
+
+      body {
+        background: #111827;
+        color: #f9fafb;
+      }
+
+      .card {
+        background: #1f2937;
+      }
+
+      .subtitle,
+      .small,
+      .empty,
+      .footer {
+        color: #d1d5db;
+      }
+
+      .download {
+        background: #374151;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main>
+
+  <h1>Colorado Wind Forecasts</h1>
+
+  <div class="subtitle">
+    Terrain-downscaled WindNinja / HRRR forecasts
+  </div>
+
+  <div id="status" class="card">
+    Loading forecasts…
+  </div>
+
+  <div id="products"></div>
+
+  <div class="footer">
+    Modeled guidance only. Complex terrain, vegetation,
+    thermals and local conditions can differ from the forecast.
+  </div>
+
+</main>
+
+
+<script>
+
+function prettyDate(dateString) {
+
+  if (!dateString) {
+    return "Unknown";
+  }
+
+  const parts = dateString.split("-");
+
+  const d = new Date(Date.UTC(
+    Number(parts[0]),
+    Number(parts[1]) - 1,
+    Number(parts[2]),
+    18
+  ));
+
+  return d.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "America/Denver"
+  });
+}
+
+
+function prettyTimestamp(timestamp) {
+
+  if (!timestamp) {
+    return "Unknown";
+  }
+
+  return new Date(timestamp).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/Denver",
+    timeZoneName: "short"
+  });
+}
+
+
+function prettyTime(time) {
+
+  const [hourText, minute] = time.split(":");
+
+  let hour = Number(hourText);
+
+  const suffix = hour >= 12 ? "PM" : "AM";
+
+  hour = hour % 12;
+
+  if (hour === 0) {
+    hour = 12;
+  }
+
+  if (minute === "00") {
+    return `${hour} ${suffix}`;
+  }
+
+  return `${hour}:${minute} ${suffix}`;
+}
+
+
+function renderProduct(title, product) {
+
+  if (!product) {
+    return "";
+  }
+
+  const times = (product.times || [])
+    .map(prettyTime)
+    .join(" · ");
+
+  const downloads = (product.areas || [])
+    .map(area => `
+      <a class="download" href="${area.url}">
+        Download ${area.name}
+      </a>
+    `)
+    .join("");
+
+  return `
+    <section class="card">
+
+      <h2>${title}</h2>
+
+      <div class="meta">
+        <strong>Forecast date:</strong>
+        ${prettyDate(product.forecast_date)}
+      </div>
+
+      <div class="meta">
+        <strong>Generated:</strong>
+        ${prettyTimestamp(product.generated_at)}
+      </div>
+
+      <div class="meta small">
+        <strong>Forecast times:</strong>
+        ${times}
+      </div>
+
+      <div class="downloads">
+        ${downloads}
+      </div>
+
+    </section>
+  `;
+}
+
+
+async function loadForecasts() {
+
+  const status =
+    document.getElementById("status");
+
+  const products =
+    document.getElementById("products");
+
+  try {
+
+    const response = await fetch(
+      "forecast.json?ts=" + Date.now(),
+      {
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Could not load forecast metadata."
+      );
+    }
+
+    const data = await response.json();
+
+    status.innerHTML = `
+      <strong>Current published forecasts</strong>
+      <div class="small">
+        Forecast products update automatically
+        throughout the day.
+      </div>
+    `;
+
+    let html = "";
+
+    html += renderProduct(
+      "Full-Day Forecast",
+      data.full_day
+    );
+
+    html += renderProduct(
+      "Evening Update",
+      data.evening
+    );
+
+    if (!html) {
+
+      html = `
+        <section class="card empty">
+          No forecast products have been published yet.
+        </section>
+      `;
+    }
+
+    products.innerHTML = html;
+
+  }
+
+  catch (error) {
+
+    status.textContent =
+      "Unable to load forecast metadata.";
+
+    products.innerHTML = `
+      <section class="card empty">
+        ${error}
+      </section>
+    `;
+  }
+}
+
+
+loadForecasts();
+
+</script>
+
+</body>
+</html>
