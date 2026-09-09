@@ -1,7 +1,7 @@
 {
   "full_day": {
     "forecast_date": "2026-09-09",
-    "generated_at": "2026-09-08T20:37:05-06:00",
+    "generated_at": "2026-09-09T03:07:01-06:00",
     "times": [
       "05:00",
       "07:00",
@@ -13,40 +13,17 @@
     "areas": [
       {
         "name": "West La Garita — GMU 68",
-        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-west-la-garita-20260908-203000.kmz"
+        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-west-la-garita-20260909-030000.kmz"
       },
       {
         "name": "East La Garita — GMU 68",
-        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-east-la-garita-20260908-203000.kmz"
+        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-east-la-garita-20260909-030000.kmz"
       },
       {
         "name": "La Garita → Mesa / Bowers / Boot",
-        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-ridge-corridor-20260908-203000.kmz"
+        "url": "https://github.com/davekeder/wind-reports/releases/download/current/full-day-ridge-corridor-20260909-030000.kmz"
       }
     ]
   },
-  "evening": {
-    "forecast_date": "2026-09-08",
-    "generated_at": "2026-09-08T12:05:00-06:00",
-    "times": [
-      "13:00",
-      "15:00",
-      "17:00",
-      "19:00"
-    ],
-    "areas": [
-      {
-        "name": "West La Garita — GMU 68",
-        "url": "https://github.com/davekeder/wind-reports/releases/download/current/evening-west-la-garita-20260908-120004.kmz"
-      },
-      {
-        "name": "East La Garita — GMU 68",
-        "url": "https://github.com/davekeder/wind-reports/releases/download/current/evening-east-la-garita-20260908-120004.kmz"
-      },
-      {
-        "name": "La Garita → Mesa / Bowers / Boot",
-        "url": "https://github.com/davekeder/wind-reports/releases/download/current/evening-ridge-corridor-20260908-120004.kmz"
-      }
-    ]
-  }
+  "evening": null
 }
